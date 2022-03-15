@@ -14,7 +14,7 @@ public virtual class RTSTriggerHandler {
     public static set<Id> recursiveIDCheck = new Set<Id>();
     public static set<String> recursiveStringCheck = new Set<String>();
   
-    // static map of handlername, times run() was invoked
+    // static map of handler name, times run() was invoked
     private static Map<String, LoopCount> loopCountMap;
     private static Set<String> bypassedHandlers;
     private static Map<String, Boolean> classBypassMap;
@@ -37,7 +37,6 @@ public virtual class RTSTriggerHandler {
     // constructor
     public RTSTriggerHandler() {
       this.setTriggerContext();
-      this.setMaxLoopCount(6);
     }
   
     /***************************************
@@ -46,26 +45,35 @@ public virtual class RTSTriggerHandler {
   
     // main method that will be called during execution
     public void run() {
-      if (!validateRun())
-        return;
+        if(!validateRun()) {
+            return;
+        }
   
       addToLoopCount();
   
       // dispatch to the correct handler method
-      if (this.context == TriggerContext.BEFORE_INSERT) {
-        this.beforeInsert();
-      } else if (this.context == TriggerContext.BEFORE_UPDATE) {
-        this.beforeUpdate();
-      } else if (this.context == TriggerContext.BEFORE_DELETE) {
-        this.beforeDelete();
-      } else if (this.context == TriggerContext.AFTER_INSERT) {
-        this.afterInsert();
-      } else if (this.context == TriggerContext.AFTER_UPDATE) {
-        this.afterUpdate();
-      } else if (this.context == TriggerContext.AFTER_DELETE) {
-        this.afterDelete();
-      } else if (this.context == TriggerContext.AFTER_UNDELETE) {
-        this.afterUndelete();
+      switch on this.context {
+        when BEFORE_INSERT {
+          this.beforeInsert();
+        }
+        when BEFORE_UPDATE {
+          this.beforeUpdate();
+        }
+        when BEFORE_DELETE {
+          this.beforeDelete();
+        }
+        when AFTER_INSERT {
+          this.afterInsert();
+        }
+        when AFTER_UPDATE {
+          this.afterUpdate();
+        }
+        when AFTER_DELETE {
+          this.afterDelete();
+        }
+        when AFTER_UNDELETE {
+          this.afterUndelete();
+        }
       }
     }
   
@@ -114,7 +122,7 @@ public virtual class RTSTriggerHandler {
     }
   
     /***************************************
-     * private instancemethods
+     * private instance methods
      ***************************************/
   
     @TestVisible
@@ -203,10 +211,8 @@ public virtual class RTSTriggerHandler {
           'Trigger handler called outside of Trigger execution'
         );
       }
-      if (RTSTriggerHandler.bypassedHandlers.contains(getHandlerName())) {
-        return false;
-      }
-      return true;
+
+      return !RTSTriggerHandler.bypassedHandlers.contains(getHandlerName());
     }
   
     @TestVisible
@@ -279,12 +285,7 @@ public virtual class RTSTriggerHandler {
       }
   
       public Boolean exceeded() {
-        if (this.max < 0)
-          return false;
-        if (this.count > this.max) {
-          return true;
-        }
-        return false;
+        return this.max >= 0 && this.count > this.max;
       }
   
       public Integer getMax() {
