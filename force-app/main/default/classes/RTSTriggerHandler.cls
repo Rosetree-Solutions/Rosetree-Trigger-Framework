@@ -11,13 +11,13 @@ public virtual class RTSTriggerHandler {
             addIdToListToProcess.add(p.Id);
           }
     */
-    public static set<Id> recursiveIDCheck = new Set<Id>();
-    public static set<String> recursiveStringCheck = new Set<String>();
+
   
-    // static map of handler name, times run() was invoked
+    // Static Variables
     private static Map<String, LoopCount> loopCountMap;
     private static Set<String> bypassedHandlers;
-    private static Map<String, Boolean> classBypassMap;
+    private static Set<String> bypassMetadataRecords;
+    public static set<Id> recursiveIDCheck = new Set<Id>();
   
     // the current context of the trigger, overridable in tests
     @TestVisible
@@ -31,7 +31,7 @@ public virtual class RTSTriggerHandler {
     static {
       loopCountMap = new Map<String, LoopCount>();
       bypassedHandlers = new Set<String>();
-      classBypassMap = getClassBypassMap();
+      bypassMetadataRecords = getBypassMetadataRecords();
     }
   
     // constructor
@@ -93,32 +93,48 @@ public virtual class RTSTriggerHandler {
     /***************************************
      * public static methods
      ***************************************/
-  
-    public static void bypass(String handlerName) {
-      RTSTriggerHandler.bypassedHandlers.add(handlerName);
+
+    @TestVisible
+    private static set<String> getBypassMetadataRecords() {
+        set<String> bypassedMetadataRecords = new set<String>();
+      for (Apex_Class_Bypass__mdt thisBypass : [
+        SELECT DEVELOPERNAME, BYPASS__C
+        FROM Apex_Class_Bypass__mdt
+        WHERE BYPASS__C = true
+      ]) {
+        RTSTriggerHandler.bypass(thisBypass.developername);
+        bypassedMetadataRecords.add(thisBypass.developername);
+      }
+      return bypassedMetadataRecords;
     }
   
-    public static void clearBypass(String handlerName) {
-      RTSTriggerHandler.bypassedHandlers.remove(handlerName);
+    public static void bypass(String bypassName) {
+      RTSTriggerHandler.bypassedHandlers.add(bypassName);
     }
   
-    public static Boolean isBypassed(String handlerName) {
-      return RTSTriggerHandler.bypassedHandlers.contains(handlerName);
+    public static void clearBypass(String bypassName) {
+        /*
+           You can't clear a bypass that was created 
+           declaratively via the custom metadata records.
+        */
+        if(!RTSTriggerHandler.bypassMetadataRecords.contains(bypassName)){
+            RTSTriggerHandler.bypassedHandlers.remove(bypassName);
+        }
+    }
+  
+    public static Boolean isBypassed(String bypassName) {
+      return RTSTriggerHandler.bypassedHandlers.contains(bypassName);
     }
   
     public static void clearAllBypasses() {
       RTSTriggerHandler.bypassedHandlers.clear();
-    }
-  
-    public static Boolean apexClassShouldRun(String className) {
-      if (classBypassMap.size() > 0) {
-        if (classBypassMap.containsKey(className)) {
-          if (classBypassMap.get(className) == true) {
-            return false;
-          }
-        }
-      }
-      return true;
+      /*
+         Adding the custom metadata bypass records back in as 
+         we don't want to clear bypasses created declaratively
+         via the metadata records
+      */
+      RTSTriggerHandler.bypassedHandlers.addAll(RTSTriggerHandler.bypassMetadataRecords);
+
     }
   
     /***************************************
@@ -212,7 +228,7 @@ public virtual class RTSTriggerHandler {
         );
       }
 
-      return !RTSTriggerHandler.bypassedHandlers.contains(getHandlerName());
+      return !RTSTriggerHandler.isBypassed(getHandlerName());
     }
   
     @TestVisible
@@ -220,17 +236,6 @@ public virtual class RTSTriggerHandler {
       return String.valueOf(this).substring(0, String.valueOf(this).indexOf(':'));
     }
   
-    @TestVisible
-    private static Map<String, Boolean> getClassBypassMap() {
-      Map<String, Boolean> returnValue = new Map<String, Boolean>();
-      for (Apex_Class_Bypass__mdt thisBypass : [
-        SELECT DEVELOPERNAME, BYPASS__C
-        FROM Apex_Class_Bypass__mdt
-      ]) {
-        returnValue.put(thisBypass.developername, thisBypass.bypass__c);
-      }
-      return returnValue;
-    }
   
     /***************************************
      * context methods
