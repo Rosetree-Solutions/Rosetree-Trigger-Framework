@@ -51,10 +51,28 @@ Often it is desired to stop the execution of entire trigger handlers or certain 
 ###### Apex Bypass Custom Metadata Type
 There is a custom metadata type called "Apex Bypass" that can be accessed from `SETUP > Custom Code > Custom Metadata Types`. To bypass a trigger handler you simply need to create a record with a DeveloperName set to the trigger handler's name **exactly** along with the Bypass__c field set to true. 
 
+###### Bypass Section of Code
+
 #### Max Loop Count
 
 #### Recursive Static Variables
+There are a couple of static variables included in the framework which can be used to prevent the same record from being executed multiple times within one trigger context. These static variables are usefule for scenarios where you don't want to set a max loop count which would limit the entire trigger context from running, but instead you want to selectively limit specified records from running. 
 
+These Static variables are available in the Trigger Framework and will keep their values during the Apex Transaction. 
+```` apex     
+public static set<Id> recursiveIDCheck;
+public static set<String> recursiveStringCheck;
+````
+
+An example of how these static variables could be used within a Trigger Handler.
+
+```` apex
+if (!recursiveIDCheck.contains(opp.Id)) {
+    recursiveIDCheck.add(opp.Id);
+    // run the logic for the record which should only run once
+}
+````
+    
 ### Overridable Methods
 * beforeInsert()
 * beforeUpdate()
@@ -64,12 +82,10 @@ There is a custom metadata type called "Apex Bypass" that can be accessed from `
 * afterDelete()
 * afterUndelete()
 
-#### TO DO
-* Describe how bypass method works
-    * Trigger Handler Name example
-    * Generic bypass name in code example
-    * Bypass based off of custom metadata type with handler name or bypass name
-* Describe recursive ID feature
-* Add general Notes likely based on Kevin's existing read me
-
+### Metadata Summary
+| Type | Name | Description |
+| --- | --- | --- |
+| Apex Class | RTSTriggerHandler.cls | This is class that drives the Trigger Framework. All Trigger Handlers should extend this base class. |
+| Apex Class | RTSTriggerHandler_Test.cls | This is the test class for the RTSTriggerHandler.cls|
+| Custom Metadata Type | Apex Bypass | This is a custom metadata type that can be used to declaratively bypass the execution of entire trigger handlers or sections of code. 
 

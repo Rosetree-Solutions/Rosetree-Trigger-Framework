@@ -1,23 +1,24 @@
-public virtual class RTSTriggerHandler {
-    /*
-       A couple of static variables that can be used for recursive checks
-       For example, in the trigger handler you can add the below code to 
-       ensure the record was only run through the method once per trigger invocation
-  
-          if (
-            !recursiveIDCheck.contains(p.Id)
-          ) {
-            recursiveIDCheck.add(p.Id);
-            addIdToListToProcess.add(p.Id);
-          }
+  /**
+    * @author Rosetree Solutions
+    * @website https://rosetreesolutions.com/
+    * @email info@RosetreeSolutions.com
+    * @phone (214) 731 - 7314
+    * @description This Trigger Framework is based heavily on 
+    * Kevin O'Hara's SFDC Trigger Framework. Rosetree Solutions
+    * extended Kevin's framework by including a few new features
+    * as well as a few other improvements. The full documentation 
+    * for this framework can be accessed at the below URL 
+    * @url  https://github.com/Rosetree-Solutions/Rosetree-Trigger-Framework
     */
 
-  
+public virtual class RTSTriggerHandler {
+
     // Static Variables
     private static Map<String, LoopCount> loopCountMap;
     private static Set<String> bypassedHandlers;
     private static Set<String> bypassMetadataRecords;
-    public static set<Id> recursiveIDCheck = new Set<Id>();
+    public static set<Id> recursiveIDCheck;
+    public static set<String> recursiveStringCheck;
   
     // Instance Variables
     @TestVisible
@@ -30,6 +31,8 @@ public virtual class RTSTriggerHandler {
       loopCountMap = new Map<String, LoopCount>();
       bypassedHandlers = new Set<String>();
       bypassMetadataRecords = getBypassMetadataRecords();
+      recursiveIDCheck = new Set<Id>();
+      recursiveStringCheck = new Set<String>();
     }
   
     // constructor
@@ -139,8 +142,6 @@ public virtual class RTSTriggerHandler {
      * private instance methods
      ***************************************/
 
-
-  
     @TestVisible
     private void setTriggerContext() {
       this.setTriggerContext(null, false);
@@ -235,7 +236,6 @@ public virtual class RTSTriggerHandler {
     private String getHandlerName() {
         return String.valueOf(this).substring(0, String.valueOf(this).indexOf(':'));
     }
-  
   
     /***************************************
      * context methods
