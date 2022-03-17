@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>For all Apex Classes or Methods, use this setting to bypass the execution of that logic. Create a new Apex Class Bypass record with the name of the apex class or method you wish to identify. Marking the &apos;Bypass&apos; checkbox on that record as TRUE will prevent that logic from executing. All classes not identified by Apex Class Bypass records or those where &apos;Bypass&apos; is marked as FALSE, will execute normally.</description>
+    <label>Apex Class Bypass</label>
+    <pluralLabel>Apex Class Bypasses</pluralLabel>
+    <visibility>Public</visibility>
+</CustomObject>
