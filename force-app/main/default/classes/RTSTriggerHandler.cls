@@ -19,11 +19,9 @@ public virtual class RTSTriggerHandler {
     private static Set<String> bypassMetadataRecords;
     public static set<Id> recursiveIDCheck = new Set<Id>();
   
-    // the current context of the trigger, overridable in tests
+    // Instance Variables
     @TestVisible
     private TriggerContext context;
-  
-    // the current context of the trigger, overridable in tests
     @TestVisible
     private Boolean isTriggerExecuting;
   
@@ -97,9 +95,9 @@ public virtual class RTSTriggerHandler {
     @TestVisible
     private static set<String> getBypassMetadataRecords() {
         set<String> bypassedMetadataRecords = new set<String>();
-      for (Apex_Class_Bypass__mdt thisBypass : [
+      for (Apex_Bypass__mdt thisBypass : [
         SELECT DEVELOPERNAME, BYPASS__C
-        FROM Apex_Class_Bypass__mdt
+        FROM Apex_Bypass__mdt
         WHERE BYPASS__C = true
       ]) {
         RTSTriggerHandler.bypass(thisBypass.developername);
@@ -140,6 +138,8 @@ public virtual class RTSTriggerHandler {
     /***************************************
      * private instance methods
      ***************************************/
+
+
   
     @TestVisible
     private void setTriggerContext() {
@@ -233,7 +233,7 @@ public virtual class RTSTriggerHandler {
   
     @TestVisible
     private String getHandlerName() {
-      return String.valueOf(this).substring(0, String.valueOf(this).indexOf(':'));
+        return String.valueOf(this).substring(0, String.valueOf(this).indexOf(':'));
     }
   
   
