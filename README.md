@@ -16,6 +16,15 @@ Note, when referencing the Trigger's static variables within the handler, SObjec
 ```apex
 public class OpportunityTriggerHandler extends RTSTriggerHandler {
 
+    public OpportunityTriggerHandler(){
+        /*
+            This will pass in the Trigger Handler Name to the RTSTriggerHandler constructor 
+            so the class doesn't have to parse the handler name. This isn't required but 
+            reduces the CPU Time which is especially evident in large data volumes.
+        */
+        super('OpportunityTriggerHandler');
+    }
+
     public override void beforeUpdate(){
         for (Opportunity opp : (List<Opportunity>) Trigger.new) {
             // Do something here
@@ -53,6 +62,10 @@ If you would like to bypass a full trigger handler you can use the `RTSTriggerHa
 
 ```` Apex
 public class OpportunityTriggerHandler extends RTSTriggerHandler {
+
+    public OpportunityTriggerHandler(){
+        super('OpportunityTriggerHandler');
+    }
 
     public override void afterUpdate(){
 
@@ -95,6 +108,10 @@ In the below example on the AccountTriggerHandler we are checking `RTSTriggerHan
 ```` Apex
 public class AccountTriggerHandler extends RTSTriggerHandler {
 
+    public AccountTriggerHandler(){
+        super('AccountTriggerHandler');
+    }
+
     public override void afterUpdate(){
         initiateAccountSync((List<Account>)Trigger.new);
     }
@@ -115,6 +132,10 @@ In the OpportunityTriggerHandler you can see where we are setting `RTSTriggerHan
 
 ```` Apex
 public class OpportunityTriggerHandler extends RTSTriggerHandler {
+
+    public OpportunityTriggerHandler(){
+        super('OpportunityTriggerHandler');
+    }
 
     public override void afterUpdate(){
 
