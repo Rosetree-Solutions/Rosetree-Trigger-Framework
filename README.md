@@ -229,7 +229,22 @@ if (!recursiveIDCheck.contains(opp.Id)) {
 * afterDelete()
 * afterUndelete()
 
-### Metadata Summary
+
+### Installation
+
+To start using the RTS Trigger Framework you simply need to create the metadata listed in the Metadata Summary table below in your org. The classes and custom metadata type is included in this GitHub repo if you prefer to create the metadata manually. Alternatively, you can use the unmanaged package below to install the same metadata automatically. 
+
+##### Unmanaged Package
+
+1. Navigate to the Production or Sandbox installation URL provided below. 
+2. Enter your username and password for the Salesforce organization in which you want to install the package, and then **click Log In**.
+3. Select **Install in Production** or **Install in Sandbox**
+4. When you get to the step where it asks you to install for Admins Only or all users feel free to select All Users. In reality this step doesn't really matter for our package as we aren't installing any user facing objects, fields, etc.
+
+| Version | Install Link | Description |
+| --- | --- | --- |
+| 1.0 | [Production Install Link](https://login.salesforce.com/packaging/installPackage.apexp?p0=04t8c000000zCfZ) <br /> [Sandbox Install Link](https://test.salesforce.com/packaging/installPackage.apexp?p0=04t8c000000zCfZ) | The first version of the package.
+##### Metadata Summary
 | Type | Name | Description |
 | --- | --- | --- |
 | Apex Class | RTSTriggerHandler.cls | This is class that drives the Trigger Framework. All Trigger Handlers should extend this base class. |
