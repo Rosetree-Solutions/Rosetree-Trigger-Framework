@@ -11,20 +11,23 @@ public class RTSTriggerHandler_Test {
       // override its internal trigger detection
       handler.isTriggerExecuting = true;
     }
+
+
+    @isTest
+    static void testConstructorWithHandlerName() {
+      RTSTriggerHandler handler = new RTSTriggerHandler('TestHandler');
+      String handlerName =  handler.getHandlerName();
+      System.assertEquals('TestHandler', handlerName, 'The handler name should match what is passed in');
+    }
   
-    /***************************************
-     * unit tests
-     ***************************************/
-  
-    // contexts tests
-  
+    // contexts tests  
     @isTest
     static void testBeforeInsert() {
       beforeInsertMode();
       handler.run();
       System.assertEquals('beforeInsert', lastMethodCalled, 'last method should be beforeInsert');
     }
-  
+
     @isTest
     static void testBeforeUpdate() {
       beforeUpdateMode();
