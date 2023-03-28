@@ -109,9 +109,9 @@ public virtual class RTSTriggerHandler {
   @TestVisible
   private static set<String> getBypassMetadataRecords() {
     set<String> bypassedMetadataRecords = new Set<String>();
-    for (Apex_Bypass__mdt thisBypass : [
+    for (Apex_Class_Bypass__mdt thisBypass : [
       SELECT DEVELOPERNAME, BYPASS__C
-      FROM Apex_Bypass__mdt
+      FROM Apex_Class_Bypass__mdt
       WHERE BYPASS__C = TRUE
     ]) {
       RTSTriggerHandler.bypass(thisBypass.developername);
